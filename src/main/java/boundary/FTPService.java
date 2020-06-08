@@ -1,18 +1,15 @@
 package boundary;
 
 import controller.ShellUtil;
-import enumeration.PropName;
 import org.apache.commons.net.PrintCommandListener;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
-import util.FileUtil;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.ZipOutputStream;
 
 
 public class FTPService {
@@ -77,36 +74,36 @@ public class FTPService {
         return new ShellUtil().execute(command.toString());
     }
 
-    public boolean checkAndDownload(String fileName) {
-        try {
-//            //todo set a global address for file path
-            FileOutputStream fileOutputStream = new FileOutputStream(fileName);
-            ZipOutputStream out = new ZipOutputStream(fileOutputStream);
-            boolean success = ftp.retrieveFile(System.getProperty(PropName.FTP_DIR.getValue())
-                    + "/" + fileName, out);
-            out.flush();
-            out.close();
-            new FileUtil().unzip(fileName,
-                    System.getProperty("user.dir") + "/" + fileName.split("\\.")[0]);
-            if (success) {
-                System.out.println("File #1 has been downloaded successfully.");
-            }
-            return success;
-        } catch (IOException ex) {
-            System.out.println("Error: " + ex.getMessage());
-            ex.printStackTrace();
-            return false;
-        } finally {
-            try {
-                if (ftp.isConnected()) {
-                    ftp.logout();
-                    ftp.disconnect();
-                }
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
+//    public boolean checkAndDownload(String fileName) {
+//        try {
+            //todo set a global address for file path
+//            FileOutputStream fileOutputStream = new FileOutputStream(fileName);
+//            ZipOutputStream out = new ZipOutputStream(fileOutputStream);
+//            boolean success = ftp.retrieveFile(System.getProperty(PropName.FTP_DIR.getValue())
+//                    + "/" + fileName, out);
+//            out.flush();
+//            out.close();
+//            new FileUtil().unzip(fileName,
+//                    System.getProperty("user.dir") + "/" + fileName.split("\\.")[0]);
+//            if (success) {
+//                System.out.println("File #1 has been downloaded successfully.");
+//            }
+//            return success;
+//        } catch (IOException ex) {
+//            System.out.println("Error: " + ex.getMessage());
+//            ex.printStackTrace();
+//            return false;
+//        } finally {
+//            try {
+//                if (ftp.isConnected()) {
+//                    ftp.logout();
+//                    ftp.disconnect();
+//                }
+//            } catch (IOException ex) {
+//                ex.printStackTrace();
+//            }
+//        }
+//    }
 
     public void disconnect() {
         if (this.ftp.isConnected()) {
