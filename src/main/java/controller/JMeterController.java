@@ -1,7 +1,6 @@
 package controller;
 
 import boundary.FTPService;
-import enumeration.PropName;
 import enumeration.TestFramework;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,12 +41,6 @@ public class JMeterController implements TestController {
         return false;
     }
 
-    @Override
-    public boolean checkFile(String fileName) {
-        String property = System.getProperty(PropName.FTP_DIR.getValue());
-        return ftpService.getServerFiles(property)
-                .contains(fileName);
-    }
 
     private String buildCommand(String jMeterFileName, String resultFileName) {
 

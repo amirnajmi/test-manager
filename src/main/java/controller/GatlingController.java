@@ -14,8 +14,4 @@ public class GatlingController implements TestController {
         return false;
     }
 
-    @Override
-    public boolean checkFile(String fileName) {
-        return true;
-    }
 }
