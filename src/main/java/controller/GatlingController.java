@@ -14,8 +14,9 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static enumeration.Constants.*;
+
 public class GatlingController implements TestController {
-    private final String GATLING_DIR = "/home/videolan/Downloads/gatling-charts-highcharts-bundle-3.3.1/bin/";
     private final ShellUtil shellUtil;
     private final FTPService ftpService;
     private static final Logger logger = LogManager.getLogger(GatlingController.class);
@@ -26,17 +27,21 @@ public class GatlingController implements TestController {
     }
 
     public boolean runTest(String zipFileName, String agentNo) {
-        String directory = GATLING_DIR + "user-files/" + zipFileName.split("\\.")[0];
+        String directory = GATLING_HOME.getValue() + GATLING_TEST_DIR.getValue()
+                + zipFileName.split("\\.")[0];
         FileUtil.unzip(zipFileName, directory);
 
-        String testFileName = FileUtil.getTestFileName(TestFramework.GATLING, zipFileName, false);
+        String testFileName = FileUtil.getTestFileName(TestFramework.GATLING,
+                zipFileName, false);
         String fullQualifiedTestName = getFullQualifiedTestName(testFileName);
         String resultDirectory = generateGatlingResultDirectory(fullQualifiedTestName, agentNo);
 //        if (downloadSuccess) {
         String command = buildCommand(fullQualifiedTestName, resultDirectory);
         boolean execute = shellUtil.execute(command);
         if (execute) {
-            FileUtil.zip(resultDirectory, System.getProperty("user.dir")+"/gatling-result");
+            FileUtil.zip(resultDirectory, System.getProperty("user.dir")
+                    + GATLING_RESULT_DIR.getValue()
+                    +"/"+testFileName+".zip");
             ftpService.upload(resultDirectory);
             return true;
         } else {
@@ -55,8 +60,9 @@ public class GatlingController implements TestController {
     }
 
     private String generateGatlingResultDirectory(String fullQualifiedTestName, String agentNo) {
+        String dir = System.getProperty("user.dir") + GATLING_RESULT_DIR.getValue();
         String[] split = fullQualifiedTestName.split("\\.");
-        return split[split.length-1] + "_" + agentNo;
+        return dir+"/" + split[split.length - 1] + "_" + agentNo+"/";
     }
 
     public String getFullQualifiedTestName(String testFileName) {
@@ -69,7 +75,7 @@ public class GatlingController implements TestController {
             }
             List<String> filtered = Files.lines(Paths.get(absolutePath)).filter(line -> line.startsWith("package")).collect(Collectors.toList());
             String packageName = filtered.get(0).replace("package ", "");
-            return packageName + "." + testFileName;
+            return packageName + "." + testFileName.replace(".scala","");
         } catch (IOException e) {
             e.printStackTrace();
         }
