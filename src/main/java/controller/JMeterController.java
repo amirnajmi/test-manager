@@ -2,14 +2,10 @@ package controller;
 
 import boundary.FTPService;
 import enumeration.TestFramework;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import util.FileUtil;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
+import util.ShellUtil;
 
 
 public class JMeterController implements TestController {
@@ -24,9 +20,7 @@ public class JMeterController implements TestController {
     }
 
     public boolean runTest(String zipFileName, String agentNo) {
-        FileUtil.unzip(zipFileName,
-                System.getProperty("user.dir") + "/" + zipFileName.split("\\.")[0]);
-        String testFileName = FileUtil.getTestFileName(TestFramework.JMETER, zipFileName);
+        String testFileName = FileUtil.getTestFileName(TestFramework.JMETER, zipFileName,false);
         String resultFileName = generateResultFileName(zipFileName, agentNo);
 //        if (downloadSuccess) {
             String command = buildCommand(testFileName, resultFileName);
@@ -49,17 +43,6 @@ public class JMeterController implements TestController {
                 .append("-t ").append(jMeterFileName).append(" ")
                 .append("-l ").append(resultFileName).append(" ");
         return command.toString();
-    }
-
-    public String getAvailableParameters() {
-        try {
-            Properties properties = new Properties();
-            properties.load(new FileInputStream(this.getClass().getResource("/jmeter-param.properties").getPath()));
-            return String.join(", ", properties.stringPropertyNames());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 
     private String generateResultFileName(String jMeterFileName, String agentNo) {

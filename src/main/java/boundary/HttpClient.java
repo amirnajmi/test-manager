@@ -1,6 +1,6 @@
 package boundary;
 
-import controller.ShellUtil;
+import util.ShellUtil;
 
 public class HttpClient {
     public boolean downloadWithShell(String host, String fileName) {

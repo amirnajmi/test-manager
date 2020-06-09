@@ -1,4 +1,4 @@
-package controller;
+package util;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,14 +16,16 @@ public class ShellUtil {
             Process process = processBuilder.start();
 
             StringBuilder output = new StringBuilder();
-
+            StringBuilder errorOutput = new StringBuilder();
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(process.getInputStream()));
 
+            BufferedReader errorReader =
+                    new BufferedReader(new InputStreamReader(process.getErrorStream()));
+
             String line;
-            while ((line = reader.readLine()) != null) {
-                output.append(line + "\n");
-            }
+
+            System.out.println(output.toString());
             logger.info(String.format("command execution result: %s%s", System.lineSeparator(), output.toString()));
             int exitVal = process.waitFor();
             if (exitVal == 0) {
@@ -31,6 +33,10 @@ public class ShellUtil {
                 return true;
             }
             else {
+                while ((line = errorReader.readLine()) != null) {
+                    errorOutput.append(line + "\n");
+                }
+                logger.error(errorOutput);
                 logger.error("command execution failed");
                 return false;
             }

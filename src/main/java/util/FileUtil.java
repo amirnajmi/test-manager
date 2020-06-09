@@ -4,6 +4,9 @@ import enumeration.TestFramework;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.FileHeader;
+import net.lingala.zip4j.model.ZipParameters;
+import net.lingala.zip4j.model.enums.CompressionLevel;
+import net.lingala.zip4j.model.enums.CompressionMethod;
 
 import java.io.File;
 import java.util.List;
@@ -14,12 +17,31 @@ public class FileUtil {
         ZipFile zipFile = new ZipFile(filePath);
         try {
             List<FileHeader> fileHeaders = zipFile.getFileHeaders();
-            for (FileHeader fileHeader : fileHeaders){
-                if (fileHeader.isDirectory()){
+            for (FileHeader fileHeader : fileHeaders) {
+                if (fileHeader.isDirectory()) {
                     zipFile.extractFile(fileHeader, destinationPath);
-                }
+                } else
+                    zipFile.extractAll(destinationPath);
             }
-            zipFile.extractAll(destinationPath);
+        } catch (ZipException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void zip(String targetPath, String destinationPath) {
+        ZipParameters parameters = new ZipParameters();
+        parameters.setCompressionMethod(CompressionMethod.DEFLATE);
+        parameters.setCompressionLevel(CompressionLevel.NORMAL);
+
+        ZipFile zipFile = new ZipFile(destinationPath);
+
+        File targetFile = new File(targetPath);
+        try {
+            if (targetFile.isFile()) {
+                zipFile.addFile(targetFile, parameters);
+            } else if (targetFile.isDirectory()) {
+                zipFile.addFolder(targetFile, parameters);
+            }
         } catch (ZipException e) {
             e.printStackTrace();
         }
@@ -31,9 +53,9 @@ public class FileUtil {
         if (file.isDirectory()) {
             File[] files = file.listFiles();
             for (File f : files) {
-                if (f.getName().matches(".jmx"))
+                if (f.getName().contains(".jmx"))
                     return TestFramework.JMETER;
-                else if (f.getName().matches(".scala"))
+                else if (f.getName().contains(".scala"))
                     return TestFramework.GATLING;
             }
         }
@@ -45,7 +67,8 @@ public class FileUtil {
         throw new Exception("there is no file corresponding to zip file name");
     }
 
-    public static String getTestFileName(TestFramework testFramework, String zipFileName) {
+    public static String getTestFileName(TestFramework testFramework, String zipFileName, boolean absolutePath) {
+        String baseName = zipFileName.split("\\.")[0];
         File file = new File(zipFileName.split("\\.")[0]);
         String charSeq = null;
         switch (testFramework) {
@@ -60,12 +83,21 @@ public class FileUtil {
             File[] files = file.listFiles();
             for (File f : files) {
                 if (f.getName().contains(charSeq)) {
-                    return f.getAbsolutePath();
+                    if (absolutePath)
+                        return f.getAbsolutePath();
+                    else
+                        return f.getName();
                 }
+            }
+        } else {
+            File file1 = new File(baseName + charSeq);
+            if (file1.exists()) {
+                if (absolutePath)
+                    return file1.getAbsolutePath();
+                else
+                    return file1.getName();
             }
         }
         return null;
     }
-
-
 }

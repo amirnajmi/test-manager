@@ -1,6 +1,6 @@
 package boundary;
 
-import controller.ShellUtil;
+import util.ShellUtil;
 import org.apache.commons.net.PrintCommandListener;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
