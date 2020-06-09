@@ -11,6 +11,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static enumeration.Constants.FTP_UPLOAD_DIR;
+
 
 public class FTPService {
 
@@ -45,7 +47,7 @@ public class FTPService {
     public boolean upload(String fileName) {
         try (InputStream input = new FileInputStream(
                 new File(fileName))) {
-            return this.ftp.storeFile(fileName, input);
+            return this.ftp.storeFile(FTP_UPLOAD_DIR.getValue(), input);
         } catch (Exception ex) {
 //            logger.error(ex.getMessage());
             ex.printStackTrace();

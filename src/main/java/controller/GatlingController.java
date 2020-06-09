@@ -41,7 +41,7 @@ public class GatlingController implements TestController {
         if (execute) {
             FileUtil.zip(resultDirectory, System.getProperty("user.dir")
                     + GATLING_RESULT_DIR.getValue()
-                    +"/"+testFileName+".zip");
+                    + "/" + testFileName + ZIP_FILE_EXTENSION);
             ftpService.upload(resultDirectory);
             return true;
         } else {
@@ -62,7 +62,7 @@ public class GatlingController implements TestController {
     private String generateGatlingResultDirectory(String fullQualifiedTestName, String agentNo) {
         String dir = System.getProperty("user.dir") + GATLING_RESULT_DIR.getValue();
         String[] split = fullQualifiedTestName.split("\\.");
-        return dir+"/" + split[split.length - 1] + "_" + agentNo+"/";
+        return dir + "/" + split[split.length - 1] + "_" + agentNo + "/";
     }
 
     public String getFullQualifiedTestName(String testFileName) {
@@ -75,23 +75,10 @@ public class GatlingController implements TestController {
             }
             List<String> filtered = Files.lines(Paths.get(absolutePath)).filter(line -> line.startsWith("package")).collect(Collectors.toList());
             String packageName = filtered.get(0).replace("package ", "");
-            return packageName + "." + testFileName.replace(".scala","");
+            return packageName + "." + testFileName.replace(".scala", "");
         } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
-
-    public static void main(String[] args) {
-        try {
-//            String testFileName = FileUtil.getTestFileName(TestFramework.GATLING, "HttpSimulation1.zip", false);
-
-            TestController build = TestControllerBuilder.build("localhost"
-                    , 4000, "user", "password", "HttpSimulation1.zip");
-            build.runTest("HttpSimulation1.zip", "12313");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 }

@@ -7,6 +7,8 @@ import org.apache.logging.log4j.Logger;
 import util.FileUtil;
 import util.ShellUtil;
 
+import static enumeration.Constants.JMETER_RESULT_DIR;
+
 
 public class JMeterController implements TestController {
     private final ShellUtil shellUtil;
@@ -20,17 +22,17 @@ public class JMeterController implements TestController {
     }
 
     public boolean runTest(String zipFileName, String agentNo) {
-        String testFileName = FileUtil.getTestFileName(TestFramework.JMETER, zipFileName,false);
+        String testFileName = FileUtil.getTestFileName(TestFramework.JMETER, zipFileName, true);
         String resultFileName = generateResultFileName(zipFileName, agentNo);
 //        if (downloadSuccess) {
-            String command = buildCommand(testFileName, resultFileName);
-            boolean execute = shellUtil.execute(command);
-            if (execute) {
-                ftpService.upload(resultFileName);
-                return true;
-            } else {
-                logger.error("test execution failed");
-            }
+        String command = buildCommand(testFileName, resultFileName);
+        boolean execute = shellUtil.execute(command);
+        if (execute) {
+            ftpService.upload(resultFileName);
+            return true;
+        } else {
+            logger.error("test execution failed");
+        }
 //        }
         return false;
     }
@@ -46,7 +48,9 @@ public class JMeterController implements TestController {
     }
 
     private String generateResultFileName(String jMeterFileName, String agentNo) {
-        return jMeterFileName.split("\\.")[0] +"_"+agentNo+ "_result.jtl";
+        String baseDir = System.getProperty("user.dir")
+                + JMETER_RESULT_DIR.getValue();
+        return baseDir + "/" + jMeterFileName.split("\\.")[0] + "_" + agentNo + "_result.jtl";
     }
 
 }

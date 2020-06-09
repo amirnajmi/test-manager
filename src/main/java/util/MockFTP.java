@@ -12,6 +12,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import static enumeration.Constants.FTP_UPLOAD_DIR;
+
 public class MockFTP {
     private FakeFtpServer fakeFtpServer;
     public static final String USERNAME = "user";
@@ -24,17 +26,10 @@ public class MockFTP {
         FakeFtpServer fakeFtpServer = new FakeFtpServer();
         this.fakeFtpServer = fakeFtpServer;
         fakeFtpServer.setServerControlPort(4000);
-        fakeFtpServer.addUserAccount(new UserAccount(USERNAME, PASSWORD, "c:\\data"));
+        fakeFtpServer.addUserAccount(new UserAccount(USERNAME, PASSWORD, FTP_UPLOAD_DIR.getValue()));
 
         String content = null;
-        try {
-            content = FileUtils.readFileToString(new File("/home/videolan/Downloads/apache-jmeter-5.3/bin/template.zip"), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         FileSystem fileSystem = new WindowsFakeFileSystem();
-        fileSystem.add(new DirectoryEntry("c:\\data"));
-        fileSystem.add(new FileEntry("c:\\data\\template.zip"));
         fakeFtpServer.setFileSystem(fileSystem);
 
         System.out.println(fakeFtpServer.getFileSystem());
