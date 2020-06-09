@@ -2,18 +2,20 @@ package controller;
 
 import boundary.FTPService;
 import enumeration.TestFramework;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import util.FileUtil;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+
 public class JMeterController implements TestController {
     private final ShellUtil shellUtil;
     private final FTPService ftpService;
-    private static Logger logger = LoggerFactory.getLogger(JMeterController.class);
+    private static final Logger logger = LogManager.getLogger(JMeterController.class);
 
 
     protected JMeterController(String host, Integer port, String userName, String password) throws Exception {
@@ -22,7 +24,6 @@ public class JMeterController implements TestController {
     }
 
     public boolean runTest(String zipFileName, String agentNo) {
-//        boolean downloadSuccess = ftpService.checkAndDownload(zipFileName);
         FileUtil.unzip(zipFileName,
                 System.getProperty("user.dir") + "/" + zipFileName.split("\\.")[0]);
         String testFileName = FileUtil.getTestFileName(TestFramework.JMETER, zipFileName);
@@ -34,8 +35,7 @@ public class JMeterController implements TestController {
                 ftpService.upload(resultFileName);
                 return true;
             } else {
-                System.out.println("test execution fialed, please check log files");
-                System.exit(9);
+                logger.error("test execution failed");
             }
 //        }
         return false;

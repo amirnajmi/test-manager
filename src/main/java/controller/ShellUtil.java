@@ -1,11 +1,14 @@
 package controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class ShellUtil {
-
+    private static final Logger logger = LogManager.getLogger(ShellUtil.class);
     public boolean execute(String command) {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder();
@@ -21,14 +24,14 @@ public class ShellUtil {
             while ((line = reader.readLine()) != null) {
                 output.append(line + "\n");
             }
-
+            logger.info(String.format("command execution result: %s%s", System.lineSeparator(), output.toString()));
             int exitVal = process.waitFor();
             if (exitVal == 0) {
-                System.out.println("Success!");
+                logger.info("Command execution succeeded");
                 return true;
             }
             else {
-                //todo log (should log command and result)
+                logger.error("command execution failed");
                 return false;
             }
 
