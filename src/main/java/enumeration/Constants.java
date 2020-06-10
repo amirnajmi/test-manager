@@ -10,7 +10,7 @@ public enum Constants {
     SCALA_FILE_EXTENSION(".scala"),
     JMETER_FILE_EXTENSION(".jmx"),
     JMETER_RESULT_FILE_EXTENSION(".jtl"),
-    FTP_UPLOAD_DIR("c:\\inetpub\\wwwroot\\results");
+    FTP_UPLOAD_DIR("/results");
 
     private String value;
 

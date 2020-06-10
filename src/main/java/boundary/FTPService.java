@@ -47,7 +47,7 @@ public class FTPService {
     public boolean upload(String fileName) {
         try (InputStream input = new FileInputStream(
                 new File(fileName))) {
-            return this.ftp.storeFile(FTP_UPLOAD_DIR.getValue(), input);
+            return this.ftp.storeFile(FTP_UPLOAD_DIR.getValue()+"/"+fileName, input);
         } catch (Exception ex) {
 //            logger.error(ex.getMessage());
             ex.printStackTrace();
