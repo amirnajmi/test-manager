@@ -9,7 +9,7 @@ import util.FileUtil;
 public class TestControllerBuilder {
     private static final Logger logger = LogManager.getLogger(TestControllerBuilder.class);
     public static TestController build(String host, Integer port, String userName, String password, String fileName) throws Exception {
-        new HttpClient().downloadWithShell(host, fileName);
+        HttpClient.download(host, fileName);
         String defaultPath = System.getProperty("user.dir");
         FileUtil.unzip(defaultPath+"/"+fileName, defaultPath);
         try {
